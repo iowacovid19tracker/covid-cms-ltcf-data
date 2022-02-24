@@ -12,8 +12,8 @@ Setup
 
 Front End
 -[x] create simple landing page
--[] add jQuery
--[] add Tableau JS file
+-[x] add jQuery
+-[x] add Tableau JS file
 -[] create frontend JS file
     -[] schema for web data connectors
 -[] deploy to vercel
