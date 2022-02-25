@@ -1,7 +1,9 @@
 (function () {
     var myConnector = tableau.makeConnector();
 
-    myConnector.getSchema = function (schemaCallback) {var cols = [{
+    myConnector.getSchema = function (schemaCallback) {
+        const covidCols = [
+        {
         id: "week_ending",
         alias: "Week Ending"
         dataType: tableau.dataTypeEnum.date
@@ -93,7 +95,7 @@
         alias: "Staff - Total Confirmed COVID-19",
         dataType: tableau.dataTypeEnum.int
     }, {
-        id: "Staff_weekly_suspected_covid_19",
+        id: "staff_weekly_suspected_covid_19",
         alias: "Staff - Weekly Suspected COVID-19",
         dataType: tableau.dataTypeEnum.int
     }, {
@@ -227,20 +229,101 @@
         id: "percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time",
         alias: "Staff - COVID-19 Booster Recieved",
         dataType: tableau.dataTypeEnum.int
-    }, {
     }];
 
-    var tableSchema = {
-        id: "earthquakeFeed",
-        alias: "Earthquakes with magnitude greater than 4.5 in the last seven days",
-        columns: cols
+    let tableSchema = {
+        id: "cms_ltc_covid_data",
+        alias: "CMS LTCF Data",
+        columns: covidCols
     };
 
     schemaCallback([tableSchema]);};
 
     myConnector.getData = function (table, doneCallback) {
 
+    let tableData = []
+    var i = 0
+    
+        $.getJSON(
+            "https://data.cms.gov/data-api/v1/dataset/88265caf-7f05-4f34-bf4d-e99ae6398492/data", 
+            function(resp) {
+        var feat = resp.features,
+            tableData = [];
+
+        // Iterate over the JSON object
+        for (i = 0, len = resp.length; i < len; i++) {
+            tableData.push({
+                "week_ending": resp[i].week_ending,
+                "federal_provider_number": resp[i].federal_provider_number,
+                "provider_name": resp[i].provider_name,
+                "provider_city": resp[i].provider_city,
+                "provider_state": resp[i].provider_state,
+                "provider_zip_code": resp[i].provider_zip_code,
+                "provider_phone_number": resp[i].provider_phone_number,
+                "provider_state": resp[i].provider_state,
+                "county": resp[i].county,
+                "submitted_data": resp[i].submitted_data,
+                "residents_weekly_admissions_covid_19": resp[i].residents_weekly_admissions_covid_19,
+                "residents_total_admissions_covid_19": resp[i].residents_total_admissions_covid_19,
+                "residents_weekly_confirmed_covid_19": resp[i].residents_weekly_confirmed_covid_19,
+                "residents_total_confirmed_covid_19": resp[i].residents_total_confirmed_covid_19,
+                "residents_weekly_suspected_covid_19": resp[i].residents_weekly_suspected_covid_19,
+                "residents_total_suspected_covid_19": resp[i].residents_total_suspected_covid_19,
+                "residents_weekly_all_deaths": resp[i].residents_weekly_all_deaths,
+                "residents_total_all_deaths": resp[i].residents_total_all_deaths,
+                "residents_weekly_covid_19_deaths": resp[i].residents_weekly_covid_19_deaths,
+                "residents_total_covid_19_deaths": resp[i].residents_total_covid_19_deaths,
+                "Staff_weekly_confirmed_covid_19": resp[i].Staff_weekly_confirmed_covid_19,
+                "staff_total_confirmed_covid_19": resp[i].staff_total_confirmed_covid_19,
+                "staff_weekly_suspected_covid_19": resp[i].staff_weekly_suspected_covid_19,
+                "staff_total_suspected_covid_19": resp[i].staff_total_suspected_covid_19,
+                "staff_weekly_covid_19_deaths": resp[i].staff_weekly_covid_19_deaths,
+                "staff_total_covid_19_deaths": resp[i].staff_total_covid_19_deaths,
+                "weekly_resident_confirmed_covid_19_cases_per_1_000_residents": resp[i].weekly_resident_confirmed_covid_19_cases_per_1_000_residents,
+                "weekly_resident_covid_19_deaths_per_1_000_residents": resp[i].weekly_resident_covid_19_deaths_per_1_000_residents,
+                "total_resident_confirmed_covid_19_cases_per_1_000_residents": resp[i].total_resident_confirmed_covid_19_cases_per_1_000_residents,
+                "total_resident_covid_19_deaths_per_1_000_residents": resp[i].total_resident_covid_19_deaths_per_1_000_residents,
+                "total_residents_covid_19_deaths_as_a_percentage_of_confirmed_covid_19_cases": resp[i].total_residents_covid_19_deaths_as_a_percentage_of_confirmed_covid_19_cases,
+                "three_or_more_confirmed_covid_19_cases_this_week": resp[i].three_or_more_confirmed_covid_19_cases_this_week,
+                "number_of_residents_with_a_new_positive_covid_19_test_result_who_are_reinfected": resp[i].number_of_residents_with_a_new_positive_covid_19_test_result_who_are_reinfected,
+                "number_of_residents_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_asymptomatic": resp[i].number_of_residents_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_asymptomatic,
+                "number_of_residents_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_symptomatic": resp[i].number_of_residents_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_symptomatic,
+                "number_of_residents_with_new_influenza": resp[i].number_of_residents_with_new_influenza,
+                "number_of_residents_with_acute_respiratory_illness_symptoms_excluding_covid_19_and_or_influenza": resp[i].number_of_residents_with_acute_respiratory_illness_symptoms_excluding_covid_19_and_or_influenza,
+                "number_of_residents_with_confirmed_coinfection_with_influenza_and_covid_19": resp[i].number_of_residents_with_confirmed_coinfection_with_influenza_and_covid_19,
+                "number_of_staff_and_or_personnel_with_a_new_positive_covid_19_test_result_who_are_reinfected": resp[i].number_of_staff_and_or_personnel_with_a_new_positive_covid_19_test_result_who_are_reinfected,
+                "number_of_staff_and_or_personnel_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_symptomatic": resp[i].number_of_staff_and_or_personnel_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_symptomatic,
+                "number_of_staff_and_or_personnel_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_asymptomatic": resp[i].number_of_staff_and_or_personnel_with_a_new_positive_covid_19_test_result_who_are_reinfected_and_asymptomatic,
+                "number_of_staff_and_or_personnel_with_new_influenza": resp[i].number_of_staff_and_or_personnel_with_new_influenza,
+                "number_of_staff_and_or_personnel_with_acute_respiratory_illness_symptoms_excluding_covid_19_and_or_influenza": resp[i].number_of_staff_and_or_personnel_with_acute_respiratory_illness_symptoms_excluding_covid_19_and_or_influenza,
+                "number_of_staff_and_or_personnel_with_confirmed_coinfection_with_influenza_and_covid_19": resp[i].number_of_staff_and_or_personnel_with_confirmed_coinfection_with_influenza_and_covid_19,
+                "recent_percentage_of_current_residents_who_received_a_completed_covid_19_vaccination_at_any_time": resp[i].recent_percentage_of_current_residents_who_received_a_completed_covid_19_vaccination_at_any_time,
+                "percentage_of_current_residents_who_received_a_completed_covid_19_vaccination_at_any_time": resp[i].percentage_of_current_residents_who_received_a_completed_covid_19_vaccination_at_any_time,
+                "percentage_of_current_residents_who_received_a_partial_covid_19_vaccination_at_any_time": resp[i].percentage_of_current_residents_who_received_a_partial_covid_19_vaccination_at_any_time,
+                "recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time": resp[i].recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time,
+                "percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time": resp[i].percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time,
+                "percentage_of_current_healthcare_personnel_who_received_a_partial_covid_19_vaccination_at_any_time": resp[i].percentage_of_current_healthcare_personnel_who_received_a_partial_covid_19_vaccination_at_any_time,
+                "recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time": resp[i].recent_percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time,
+                "percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time": resp[i].percentage_of_current_healthcare_personnel_who_received_a_completed_covid_19_vaccination_at_any_time,
+                "recent_percentage_of_current_residents_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time": resp[i].recent_percentage_of_current_residents_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time,
+                "percentage_of_current_residents_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time": resp[i].percentage_of_current_residents_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time,
+                "recent_percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time": resp[i].recent_percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time,
+                "percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time": resp[i].percentage_of_current_healthcare_personnel_with_a_completed_vaccination_who_received_a_covid_19_vaccine_booster_at_any_time,
+            });
+        }
+
+        table.appendRows(tableData);
+        doneCallback();
+    });
+};
     };
 
     tableau.registerConnector(myConnector);
 })();
+
+document.querySelector("#getData").addEventListener('click',getData)
+
+function getData(){
+    tableau.connectionName = "CMS Long-Term Care Facility Dataset"
+    tableau.submit()
+}
