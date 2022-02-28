@@ -41,7 +41,7 @@ console.log("this is working, bitch");
         let tableData = []
         var i = 0
 
-        $.getJSON("https://data.cms.gov/data-api/v1/dataset/88265caf-7f05-4f34-bf4d-e99ae6398492/data", 
+        $.getJSON("https://data.cms.gov/data.json", 
         function(resp) {
             for (i = 0, len = resp.length; i <len; i++){
                 tableData.push({
